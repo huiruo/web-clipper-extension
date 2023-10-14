@@ -1,11 +1,42 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function IndexPopup() {
   const [data, setData] = useState("")
+  const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  const getCurrentUrl: () => Promise<void> = async () => {
+    const [ tab ] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    })
+
+    const { hostname } = new URL(tab.url)
+    const [_, sld, tld] = hostname.split(".")
+    const domain = `${sld}.${tld}`
+
+    console.log('getCurrentUrl:',{ tab,domain })
+    setCurrentUrl(tab.url)
+  }
 
   const onSavePage = () => {
     console.log('onSavePage-->',)
   }
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((info) => {
+
+      console.log('popup.tsx-effect:', info, '--', info.type, info.text)
+      if (info.type === 'event1') {
+        // Todo
+      }
+
+      return true
+    })
+  }, [])
+
+  useEffect(()=>{
+    getCurrentUrl()
+  },[currentUrl])
 
   return (
     <div
@@ -15,18 +46,8 @@ function IndexPopup() {
         padding: 16,
         width: '400px'
       }}>
-      <h2>
-        Welcome to your
-        <a href="https://www.plasmo.com" target="_blank">
-          {" "}
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+      {/* <input onChange={(e) => setData(e.target.value)} value={data} /> */}
+      your currentUrl is: { currentUrl }
 
       <button onClick={onSavePage}>
         Save Page1
