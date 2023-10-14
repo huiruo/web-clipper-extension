@@ -1,3 +1,6 @@
+# background
+可以调用全部的 chrome 插件 API，实现跨域请求、网页截屏、弹出 chrome 通知消息等功能。相当于在一个隐藏的浏览器页面内默默运行。 功能页面：包括点击插件图标弹出的页面（简称 popup）、插件的配置页面（简称 options）。
+
 ## service_worker
 service_worker 非常特殊，这是一直伴随插件运行的后台脚本，它没有前端页面，不支持dom，所以没法引入jquey和其他js
 
