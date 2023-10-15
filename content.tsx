@@ -4,10 +4,7 @@ import { useStorage } from "@plasmohq/storage/hook"
 import { useEffect } from "react"
 import { ACTIONS } from "~common/action"
 import type { MsgRes } from "~types"
-
-export const config: PlasmoCSConfig = {
-  matches: ["<all_urls>"]
-}
+import { prepareContent } from "~content/prepare-content"
 
 // Idea for an UI API, for popup, notification badge, or mounting UI
 // Idea for static mount
@@ -17,22 +14,23 @@ export const config: PlasmoCSConfig = {
 //   return document.querySelector("body")
 // }
 
+export const config: PlasmoCSConfig = {
+  matches: ["<all_urls>"]
+}
+
 const PlasmoOverlay = () => {
-  const [openCount] = useStorage<number>("open-count")
-  const [checked] = useStorage<boolean>("checked")
-  const [serialNumber] = useStorage<string>("serial-number")
 
   useEffect(() => {
     console.log('===content.tsx-init====',)
-    chrome.runtime.onMessage.addListener((request: MsgRes<keyof typeof ACTIONS,any>,sender, sendResponse) => {
-      console.log('%c=content.tsx-evnet:','color:red',request)
-      if (request.type === ACTIONS.TabNotComplete) {
-        // Todo
-        console.log('%c=event1-TabNotComplete','color:red',)
-      } else if(request.type === ACTIONS.GetContent){
-        console.log('%c=event2-GetContent','color:red',)
-        // sendResponse({ data: 'test' })
-        return Promise.resolve({ response: "Hi from content script" });
+    chrome.runtime.onMessage.addListener((request: MsgRes<keyof typeof ACTIONS, any>, sender, sendResponse) => {
+      if (request.type === ACTIONS.GetContent) {
+        console.log('%c=content2-GetContent:', 'color:red', request)
+        prepareContent().then((content) => {
+          console.log('GetContent:', content)
+          sendResponse({ content })
+        }).catch((error) => {
+          console.log('prepare error', error)
+        })
       }
 
       return true
@@ -40,21 +38,7 @@ const PlasmoOverlay = () => {
   }, [])
 
   return (
-    <span
-      style={{
-        padding: 12
-      }}>
-      <h1>HELLO WORLD ROOT CONTAINER</h1>
-      <input
-        type={"checkbox"}
-        readOnly
-        checked={checked === undefined ? true : checked}
-      />
-      <p>
-        Open: {openCount}
-        <i>#{serialNumber}</i>
-      </p>
-    </span>
+    <div />
   )
 }
 

@@ -22,3 +22,6 @@ yarn build
 
 ## 调试文档
 https://www.plasmo.com/blog/posts/debugging-browser-extensions
+
+## 有空的v2介绍文档
+https://juejin.cn/post/7114959554709815326

@@ -71,29 +71,14 @@ async function extensionSaveCurrentPage(tabInfo: TabInfo) {
 }
 
 async function savePage(tabInfo: TabInfo) {
-
-  chrome.tabs
-    .query({
-      currentWindow: true,
-      active: true,
-    })
-    .then(res => {
-      console.log('get tabs:', res)
-    })
-    .catch();
-
-
-  // const data = await setMessageToFrontEnd(ACTIONS.GetContent,{})
-  console.log('savaPage start id:', tabInfo.id)
-  // const res = await 
   try {
-    chrome.tabs.sendMessage(tabInfo.id, {
+    const res = await chrome.tabs.sendMessage(tabInfo.id, {
       type: ACTIONS.GetContent,
       payload: {},
     })
-  } catch (error) {
-    console.log('%c=set tabs msg err:', 'color:red', error)
-  }
 
-  // console.log('savePage end-->',res)
+    console.log('%c=savePage end', 'color:red', res)
+  } catch (error) {
+    console.log('set tabs msg err:', error)
+  }
 }
