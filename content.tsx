@@ -13,9 +13,9 @@ export const config: PlasmoCSConfig = {
 // Idea for static mount
 // Idea for styling injection support (inline or with custom emotion cache)
 
-export const getRootContainer = () => {
-  return document.querySelector("body")
-}
+// export const getRootContainer = () => {
+//   return document.querySelector("body")
+// }
 
 const PlasmoOverlay = () => {
   const [openCount] = useStorage<number>("open-count")
