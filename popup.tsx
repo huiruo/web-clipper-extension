@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react"
 import { ACTIONS } from "~common/action"
-import type { TabInfo } from "~types"
+import type { MsgRes, TabInfo } from "~types"
 
 function IndexPopup() {
   const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  const sendTabToBg = async (tabInfo: TabInfo) => {
+    try {
+      const data = await chrome.runtime.sendMessage(
+        {
+          type: ACTIONS.QueryTab,
+          payload: tabInfo,
+        },
+      );
+
+      console.log('sendTabToBg-res', data)
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const getCurrentUrl: () => Promise<void> = async () => {
     const [tab] = await chrome.tabs.query({
@@ -21,22 +36,8 @@ function IndexPopup() {
     setCurrentUrl(tab.url)
   }
 
-  const sendTabToBg = async (tabInfo: TabInfo) => {
-    try {
-      const data = await chrome.runtime.sendMessage(
-        {
-          type: ACTIONS.QueryTab,
-          result: tabInfo,
-        },
-      );
-
-      console.log('sendTabToBg-res', data)
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const onSendToBg = async () => {
+    /*
     try {
       const data = await chrome.runtime.sendMessage(
         {
@@ -48,19 +49,28 @@ function IndexPopup() {
     } catch (error) {
       console.error(error);
     }
+    */
+
+    getCurrentUrl()
   };
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((info) => {
-      console.log('popup.tsx-effect:', info, '--', info.type, info.text)
-      if (info.type === 'event1') {
+    console.log('===init====',)
+    chrome.runtime.onMessage.addListener((request: MsgRes<keyof typeof ACTIONS,any>,sender, sendResponse) => {
+      console.log('%c=popup.tsx-evnet:','color:red',request)
+      if (request.type === ACTIONS.TabNotComplete) {
         // Todo
+        console.log('%c=event1-TabNotComplete','color:red',)
+      } else if(request.type === ACTIONS.GetContent){
+        console.log('%c=event2-GetContent','color:red',)
+        // sendResponse({ data: 'test' })
+        return Promise.resolve({ response: "Hi from content script" });
       }
 
       return true
     })
 
-    getCurrentUrl()
+    // getCurrentUrl()
   }, [])
 
   return (

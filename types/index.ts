@@ -28,5 +28,5 @@ type ActionKeys = typeof ACTIONS[keyof typeof ACTIONS];
 
 export interface MsgRes<T extends ActionKeys, I> {
   type: T
-  result: I
+  payload: I
 }

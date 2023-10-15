@@ -51,6 +51,53 @@ chrome.tabs.sendRequest()
 chrome.tabs.selected
 ```
 
+## tabs
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Working_with_the_Tabs_API
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/sendMessage
+
+```js
+// background-script.js
+"use strict";
+
+function onError(error) {
+  console.error(`Error: ${error}`);
+}
+
+function sendMessageToTabs(tabs) {
+  for (const tab of tabs) {
+    browser.tabs
+      .sendMessage(tab.id, { greeting: "Hi from background script" })
+      .then((response) => {
+        console.log("Message from the content script:");
+        console.log(response.response);
+      })
+      .catch(onError);
+  }
+}
+
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs
+    .query({
+      currentWindow: true,
+      active: true,
+    })
+    .then(sendMessageToTabs)
+    .catch(onError);
+});
+```
+
+```js
+// content-script.js
+"use strict";
+
+browser.runtime.onMessage.addListener((request) => {
+  console.log("Message from the background script:");
+  console.log(request.greeting);
+  return Promise.resolve({ response: "Hi from content script" });
+});
+```
+
 ## 将 Background Scripts 改造成 Service Workers
 在V2中，Background是可以通过 persistent 配置来确保页面时候需要 持久化 。而且还能支持 .html
 
