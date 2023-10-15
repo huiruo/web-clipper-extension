@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
+import { ACTIONS } from "~common/action"
+import type { TabInfo } from "~types"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
   const [currentUrl, setCurrentUrl] = useState<string>("")
 
   const getCurrentUrl: () => Promise<void> = async () => {
-    const [ tab ] = await chrome.tabs.query({
+    const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true
     })
@@ -14,17 +15,43 @@ function IndexPopup() {
     const [_, sld, tld] = hostname.split(".")
     const domain = `${sld}.${tld}`
 
-    console.log('getCurrentUrl:',{ tab,domain })
+    await sendTabToBg(tab as TabInfo)
+
+    console.log('getCurrentUrl:', { tab, domain })
     setCurrentUrl(tab.url)
   }
 
-  const onSavePage = () => {
-    console.log('onSavePage-->',)
+  const sendTabToBg = async (tabInfo: TabInfo) => {
+    try {
+      const data = await chrome.runtime.sendMessage(
+        {
+          type: ACTIONS.QueryTab,
+          result: tabInfo,
+        },
+      );
+
+      console.log('sendTabToBg-res', data)
+    } catch (error) {
+      console.error(error);
+    }
   }
+
+  const onSendToBg = async () => {
+    try {
+      const data = await chrome.runtime.sendMessage(
+        {
+          type: 'getShortUrl',
+          url: 'test',
+        },
+      );
+      console.log('onSendToBg--', data)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((info) => {
-
       console.log('popup.tsx-effect:', info, '--', info.type, info.text)
       if (info.type === 'event1') {
         // Todo
@@ -32,11 +59,9 @@ function IndexPopup() {
 
       return true
     })
-  }, [])
 
-  useEffect(()=>{
     getCurrentUrl()
-  },[currentUrl])
+  }, [])
 
   return (
     <div
@@ -46,11 +71,10 @@ function IndexPopup() {
         padding: 16,
         width: '400px'
       }}>
-      {/* <input onChange={(e) => setData(e.target.value)} value={data} /> */}
-      your currentUrl is: { currentUrl }
+      your currentUrl is: {currentUrl}
 
-      <button onClick={onSavePage}>
-        Save Page1
+      <button onClick={onSendToBg}>
+        Send To Bg
       </button>
     </div>
   )

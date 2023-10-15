@@ -1,6 +1,6 @@
 {
-  "name": "penx-demo",
-  "displayName": "Penx demo",
+  "name": "crawl-web",
+  "displayName": "crawl-web-extension",
   "version": "0.0.1",
   "description": "A basic Plasmo extension.",
   "author": "ruo.com",
@@ -10,8 +10,8 @@
     "test": "plasmo test"
   },
   "dependencies": {
-    "@plasmohq/storage": "^1.8.0",
     "plasmo": "0.83.0",
+    "@plasmohq/storage": "^1.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
