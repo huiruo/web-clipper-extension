@@ -1,5 +1,6 @@
 import { Storage } from '@plasmohq/storage';
 import { ACTIONS } from '~common/action';
+import { parsePreparedContent } from '~common/parser';
 import type { MsgRes, TabInfo } from '~types';
 
 async function setMessageToFrontEnd(type: keyof typeof ACTIONS | string, payload: any) {
@@ -77,7 +78,9 @@ async function savePage(tabInfo: TabInfo) {
       payload: {},
     })
 
-    console.log('%c=savePage end', 'color:red', res)
+    console.log('%c=savePage 1:', 'color:green', { url:tabInfo.url, document:res.document })
+    const document = await parsePreparedContent(tabInfo.url, res.document)
+    console.log('%c=savePage document-2:', 'color:green', { document,content:document.content })
   } catch (error) {
     console.log('set tabs msg err:', error)
   }

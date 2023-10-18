@@ -84,7 +84,7 @@ function IndexPopup() {
       your currentUrl is: {currentUrl}
 
       <button onClick={onSendToBg}>
-        Send To Bg
+        Send To Bg4
       </button>
     </div>
   )
