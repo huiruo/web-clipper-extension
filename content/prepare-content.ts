@@ -38,7 +38,6 @@ function prepareContentPostScroll() {
 }
 
 function prepareContentPostItem(itemEl) {
-  console.log('prepareContentPostItem==>',)
   const lowerTagName = itemEl.tagName.toLowerCase()
 
   /*
