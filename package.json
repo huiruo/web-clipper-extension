@@ -1,6 +1,6 @@
 {
-  "name": "crawl-web",
-  "displayName": "crawl-web-extension",
+  "name": "web-clipper",
+  "displayName": "web-clipper",
   "version": "0.0.1",
   "description": "A basic Plasmo extension.",
   "author": "ruo.com",
